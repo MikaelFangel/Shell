@@ -20,13 +20,10 @@ int main() {
     else {
         printf("Child, pid: %i\n", pid);
 
-        char* args[2];
-        args[0] = "bin/ls";
-        args[1] = NULL;
-
-        execv(args[0], args);
-        
+        char* args[] = {"bin/ls.bin" "-1", "./", NULL};
+        int back = execvp(args[0], args);
+        printf("failed to execv, error: %i", back);
     }
 
-    return 1;
+    return 0;
 }   
