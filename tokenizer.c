@@ -2,16 +2,17 @@
 #include <string.h>
 
 int main(void) {
-    char command[256] = {0}, buf[256] = {0};
-    fgets(command, sizeof(buf), stdin);
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t lineSize = 0;
 
-    char *token;
-    char *args[256]; 
-    char delim[] = " \n";
-    args[0] = strtok(command, delim);
+    lineSize = getline(&line, &len, stdin);
+    
+    char *token, *args[lineSize], delim[] = " \n";
+    args[0] = strtok(line, delim);
 
-    int i = 1;
-    while((args[i++] = strtok(NULL, delim)) != NULL);
+    int argc = 1;
+    while((args[argc++] = strtok(NULL, delim)) != NULL);
 
     return 0;
 }
