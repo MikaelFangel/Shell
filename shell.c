@@ -1,28 +1,24 @@
 #include <stdio.h>
-#include <unistd.h> 
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
 
 // This is the shell program. 
 
-char* getInput(){
-    return "ls";
-}
-
 int main() {
-
-    // Get the input from the fd[1]
-    char* input = getInput();
 
     // Create child process and execute the command
     int pid = fork();
-    if (pid > 0) {
-        printf("Parent, pid: %i\n", pid);
-    }
-    else {
+    if (pid < 0){
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    } else if (pid == 0) {
         printf("Child, pid: %i\n", pid);
-
-        char* args[] = {"bin/ls.bin" "-1", "./", NULL};
-        int back = execvp(args[0], args);
+        int back = execlp("/bin/ls","",NULL);
         printf("failed to execv, error: %i", back);
+    } else {
+        printf("Parent, pid: %i\n", pid);
     }
 
     return 0;
