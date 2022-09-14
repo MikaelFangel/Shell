@@ -22,7 +22,7 @@ int main() {
 
         // Construct the string
         char baseStr[] = "/bin/";
-        char* fullStr = malloc(sizeof(baseStr) + sizeof(input));
+        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(input)/sizeof(input[0]));
         fullStr = strcat(baseStr, input);
 
         // Execute and print error if we get error code back
