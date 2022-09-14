@@ -3,10 +3,11 @@
 #include <string.h>
 
 int main(void) {
+    char *line = NULL;          // Let getline do the heap allocation
+    size_t len = 0;
+    ssize_t nread;
+
     for(;;) {
-        char *line = NULL;          // Let getline do the heap allocation
-        size_t len = 0;
-        ssize_t nread;
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -24,8 +25,8 @@ int main(void) {
         // Read the tokens into args and keep track of number of arguments
         while((args[argc++] = strtok(NULL, delim)) != NULL);
 
-        free(line);
     }
 
+    free(line);
     exit(EXIT_SUCCESS);
 }
