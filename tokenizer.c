@@ -1,18 +1,29 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int main(void) {
-    char *line = NULL;
+    char *line = NULL;          // Let getline do the heap allocation
     size_t len = 0;
-    ssize_t lineSize = 0;
+    ssize_t nread;
 
-    lineSize = getline(&line, &len, stdin);
-    
-    char *token, *args[lineSize], delim[] = " \n";
-    args[0] = strtok(line, delim);
+    for(;;) {
+        nread = getline(&line, &len, stdin);
+        // Check if there was an error reading the line and free the line pointer if so
+        if(nread == -1) {
+            free(line);             // free line even upon failure
+            exit(EXIT_FAILURE);
+        }
 
-    int argc = 1;
-    while((args[argc++] = strtok(NULL, delim)) != NULL);
+        char *token, *args[nread], delim[] = " \n";
+        int argc = 1;
 
-    return 0;
+        args[0] = strtok(line, delim);
+        if(strcmp(args[0], "exit") == 0) break; 
+
+        // Read the tokens into args and keep track of number of arguments
+        while((args[argc++] = strtok(NULL, delim)) != NULL);
+    }
+    free(line);
+    exit(EXIT_SUCCESS);
 }
