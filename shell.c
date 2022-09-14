@@ -8,7 +8,7 @@
 
 int main() {
 
-    char* args[3] = {"ls", "-l"};
+    char* args[3] = {"ls", "-la"};
 
     // Create child process and execute the command
     int pid = fork();
@@ -26,7 +26,7 @@ int main() {
         fullStr = strcat(baseStr, args[0]);
 
         // Execute and print error if we get error code back
-        int back = execlp(fullStr, args[1], NULL);
+        int back = execvp(fullStr, args);
         printf("failed to execv, error: %i", back);
 
     } else {
