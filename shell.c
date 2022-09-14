@@ -8,7 +8,7 @@
 
 int main() {
 
-    char input[] = "pwd";
+    char* args[3] = {"ls", "-l"};
 
     // Create child process and execute the command
     int pid = fork();
@@ -22,11 +22,11 @@ int main() {
 
         // Construct the string
         char baseStr[] = "/bin/";
-        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(input)/sizeof(input[0]));
-        fullStr = strcat(baseStr, input);
+        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(args[0])/sizeof(args[0]));
+        fullStr = strcat(baseStr, args[0]);
 
         // Execute and print error if we get error code back
-        int back = execlp(fullStr, "", NULL);
+        int back = execlp(fullStr, args[1], NULL);
         printf("failed to execv, error: %i", back);
 
     } else {
