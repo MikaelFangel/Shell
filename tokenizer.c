@@ -14,17 +14,18 @@ int main(void) {
         if(nread == -1) {
             free(line);             // free line even upon failure
             exit(EXIT_FAILURE);
+        } else if(nread > 1) {
+
+            char *token, *args[nread], delim[] = " \n";
+            int argc = 1;
+
+            args[0] = strtok(line, delim);
+            if(strcmp(args[0], "exit") == 0) break; 
+
+            // Read the tokens into args and keep track of number of arguments
+            while((args[argc++] = strtok(NULL, delim)) != NULL);
+            args[argc] = NULL;
         }
-
-        char *token, *args[nread], delim[] = " \n";
-        int argc = 1;
-
-        args[0] = strtok(line, delim);
-        if(strcmp(args[0], "exit") == 0) break; 
-
-        // Read the tokens into args and keep track of number of arguments
-        while((args[argc++] = strtok(NULL, delim)) != NULL);
-
     }
 
     free(line);
