@@ -6,32 +6,45 @@
 
 // This is the shell program. 
 
+int newProcess(int argc, char* argv[]);
+
 int main() {
 
-    char* args[3] = {"ls", "-la"};
+    // OBS! Please note that the length of the char array is one more than what it contains
+    // argc should only have the number of entries in the array, not the actual size of the argv array.
+    char* argv[4] = {"ls", "-la", "/"};
+    int argc = 3;
 
-    // Create child process and execute the command
-    int pid = fork();
-
-    if (pid < 0){
-        fprintf(stderr, "fork failed\n");
-        exit(1);
-
-    } else if (pid == 0) {
-        printf("Child, pid: %i\n", pid);
-
-        // Construct the string
-        char baseStr[] = "/bin/";
-        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(args[0])/sizeof(args[0]));
-        fullStr = strcat(baseStr, args[0]);
-
-        // Execute and print error if we get error code back
-        int back = execvp(fullStr, args);
-        printf("failed to execv, error: %i", back);
-
-    } else {
-        printf("Parent, pid: %i\n", pid);
-    }
+    newProcess(argc, argv);
 
     return 0;
 }   
+
+
+int newProcess(int argc, char* argv[]){
+    int pid = fork();
+
+    if (pid < 0) {          // Failed
+        fprintf(stderr, "fork failed\n");
+        exit(1);
+    } else if (pid > 0) {   // Parent
+        printf("Parent, pid: %i\n", pid);
+
+    } else {                // Child
+        printf("Child, pid: %i\n", pid);
+
+        // Construct path string
+        char baseStr[] = "/bin/";
+        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(argv[0])/sizeof(argv[0]));
+        fullStr = strcat(baseStr, argv[0]);
+
+        // Execute and print error if we get error code back
+        int back;
+        if (argc > 1)
+            back = execvp(fullStr, argv);
+        else if (argc == 1)
+            back = execlp(fullStr, "", NULL);
+
+        printf("failed to exec, error: %i", back);
+    }
+}
