@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
-int newProcess(int argc, char* argv[]);
+void newProcess(int argc, char* argv[]);
 
 int main(void) {
     char *line = NULL;          // Let getline do the heap allocation
@@ -22,7 +22,7 @@ int main(void) {
             exit(EXIT_FAILURE);
         } else if(nread > 1) {
 
-            char *token, *args[nread], delim[] = " \n";
+            char *args[nread], delim[] = " \n";
             int argc = 1;
 
             args[0] = strtok(line, delim);
