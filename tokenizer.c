@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 
 void newProcess(int argc, char* argv[]);
+void pipeProcesses(int argcfrom, char *argvfrom[], int argcto, char *argvto[]);
 void picture();
 
 int main(void) {
@@ -38,6 +39,19 @@ int main(void) {
     }
 
     free(line);
+
+    // Temp demo for piping
+    // char *args1[3];
+    // char *args2[3];
+
+    // args1[0] = "ls";
+    // args1[1] = "-l";
+    // args1[2] = NULL;
+    // args2[0] = "wc";
+    // args2[1] = "-l";
+    // args2[2] = NULL;
+
+    // pipeProcesses(0, args1, 0, args2);
     exit(EXIT_SUCCESS);
 }
 
@@ -74,20 +88,71 @@ void newProcess(int argc, char* argv[]){
     }
 }
 
+void pipeProcesses(int argcfrom, char *argvfrom[], int argcto, char *argvto[]) {
+    int fd[2];
+    pipe(fd);
+
+    switch (fork()) {
+        case 0:
+            // Close the write end of the pipe
+            close(fd[1]);
+
+            // Redirect stdin to read end 
+            dup2(fd[0], 0);
+
+            // Close the read end
+            close(fd[0]);
+
+            // Execute argv 0 with the output from the child process
+            execvp(argvto[0], argvto);
+
+            // Exit with failure if reached
+            exit(1);
+
+        default:
+            switch(fork()) {
+                case 0:
+                    // Close the read end of the pipe
+                    close(fd[0]);
+
+                    // Redirect write end to stdout 
+                    dup2(fd[1], 1);
+
+                    // Close file descriptor for the write end
+                    close(fd[1]);
+
+                    // Execute argv 0 and write to stdin
+                    execvp(argvfrom[0], argvfrom);
+
+                    // Exit with failure
+                    exit(1);
+
+                default:
+                    // Close file descriptors
+                    close(fd[0]);
+                    close(fd[1]);
+
+                    // Wait for two processes to finish
+                    waitpid(-1, NULL, 0);
+                    waitpid(-1, NULL, 0);
+            }
+    }
+}
+
 void picture(){
-printf("Welcome\n\n");
-//stolen at https://www.asciiart.eu/computers/computers
-printf("   _______________                        |*\\_/*|________\n");
-printf("  |  ___________  |     .-.     .-.      ||_/-\\_|______  |\n");
-printf("  | |           | |    .****. .****.     | |           | |\n");
-printf("  | |   0   0   | |    .*****.*****.     | |   0   0   | |\n");
-printf("  | |     -     | |     .*********.      | |     -     | |\n");
-printf("  | |   \\___/   | |      .*******.       | |   \\___/   | |\n");
-printf("  | |___     ___| |       .*****.        | |___________| |\n");
-printf("  |_____|\\_/|_____|        .***.         |_______________|\n");
-printf("    _|__|/ \\|_|_.............*.............._|________|_\n");
-printf("   / ********** \\                          / ********** \\\n");
-printf(" /  ************  \\                      /  ************  \\\n");
-printf("--------------------                    --------------------\n");
-printf("\n\n\n");
+    printf("Welcome\n\n");
+    //stolen at https://www.asciiart.eu/computers/computers
+    printf("   _______________                        |*\\_/*|________\n");
+    printf("  |  ___________  |     .-.     .-.      ||_/-\\_|______  |\n");
+    printf("  | |           | |    .****. .****.     | |           | |\n");
+    printf("  | |   0   0   | |    .*****.*****.     | |   0   0   | |\n");
+    printf("  | |     -     | |     .*********.      | |     -     | |\n");
+    printf("  | |   \\___/   | |      .*******.       | |   \\___/   | |\n");
+    printf("  | |___     ___| |       .*****.        | |___________| |\n");
+    printf("  |_____|\\_/|_____|        .***.         |_______________|\n");
+    printf("    _|__|/ \\|_|_.............*.............._|________|_\n");
+    printf("   / ********** \\                          / ********** \\\n");
+    printf(" /  ************  \\                      /  ************  \\\n");
+    printf("--------------------                    --------------------\n");
+    printf("\n\n\n");
 }
