@@ -5,13 +5,14 @@
 #include <sys/wait.h>
 
 void newProcess(int argc, char* argv[]);
+void picture();
 
 int main(void) {
     char *line = NULL;          // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
 
-    printf("Welcome to the shell!\nDevil will come later #silja\n");
+    picture();
 
     for(;;) {
         nread = getline(&line, &len, stdin);
@@ -71,4 +72,22 @@ void newProcess(int argc, char* argv[]){
         // Should only ever be executed if exec fails. Else the image has been overwritten.
         printf("failed to exec, error: %i", back);
     }
+}
+
+void picture(){
+printf("Welcome\n\n");
+//stolen at https://www.asciiart.eu/computers/computers
+printf("   _______________                        |*\\_/*|________\n");
+printf("  |  ___________  |     .-.     .-.      ||_/-\\_|______  |\n");
+printf("  | |           | |    .****. .****.     | |           | |\n");
+printf("  | |   0   0   | |    .*****.*****.     | |   0   0   | |\n");
+printf("  | |     -     | |     .*********.      | |     -     | |\n");
+printf("  | |   \\___/   | |      .*******.       | |   \\___/   | |\n");
+printf("  | |___     ___| |       .*****.        | |___________| |\n");
+printf("  |_____|\\_/|_____|        .***.         |_______________|\n");
+printf("    _|__|/ \\|_|_.............*.............._|________|_\n");
+printf("   / ********** \\                          / ********** \\\n");
+printf(" /  ************  \\                      /  ************  \\\n");
+printf("--------------------                    --------------------\n");
+printf("\n\n\n");
 }
