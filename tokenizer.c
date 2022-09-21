@@ -11,6 +11,8 @@ int main(void) {
     size_t len = 0;
     ssize_t nread;
 
+    printf("Welcome to the shell!\nDevil will come later #silja\n");
+
     for(;;) {
         nread = getline(&line, &len, stdin);
 
@@ -38,7 +40,7 @@ int main(void) {
     exit(EXIT_SUCCESS);
 }
 
-int newProcess(int argc, char* argv[]){
+void newProcess(int argc, char* argv[]){
     // Fork Process
     int pid = fork();
 
