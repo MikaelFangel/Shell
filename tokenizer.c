@@ -16,7 +16,7 @@ int main(void) {
             exit(EXIT_FAILURE);
         } else if(nread > 1) {
 
-            char *token, *args[nread], delim[] = " \n";
+            char *args[nread], delim[] = " \n";
             int argc = 1;
 
             args[0] = strtok(line, delim);
