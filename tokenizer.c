@@ -107,7 +107,7 @@ void pipeProcesses(char *argvfrom[], char *argvto[]) {
             execvp(argvto[0], argvto);
 
             // Exit with failure if reached
-            exit(1);
+            exit(EXIT_FAILURE);
 
         default:
             switch(fork()) {
@@ -121,11 +121,11 @@ void pipeProcesses(char *argvfrom[], char *argvto[]) {
                     // Close file descriptor for the write end
                     close(fd[1]);
 
-                    // Execute argv 0 and write to stdin
+                    // Execute argv 0 and write to stdout
                     execvp(argvfrom[0], argvfrom);
 
-                    // Exit with failure
-                    exit(1);
+                    // Exit with failure if reached
+                    exit(EXIT_FAILURE);
 
                 default:
                     // Close file descriptors
