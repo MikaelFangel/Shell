@@ -5,7 +5,7 @@
 #include <sys/wait.h>
 
 void newProcess(int argc, char* argv[]);
-void pipeProcesses(int argcfrom, char *argvfrom[], int argcto, char *argvto[]);
+void pipeProcesses(char *argvfrom[], char *argvto[]);
 void picture();
 
 int main(void) {
@@ -51,7 +51,7 @@ int main(void) {
     // args2[1] = "-l";
     // args2[2] = NULL;
 
-    // pipeProcesses(0, args1, 0, args2);
+    // pipeProcesses(args1, args2);
     exit(EXIT_SUCCESS);
 }
 
@@ -88,7 +88,7 @@ void newProcess(int argc, char* argv[]){
     }
 }
 
-void pipeProcesses(int argcfrom, char *argvfrom[], int argcto, char *argvto[]) {
+void pipeProcesses(char *argvfrom[], char *argvto[]) {
     int fd[2];
     pipe(fd);
 
