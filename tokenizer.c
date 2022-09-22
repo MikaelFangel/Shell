@@ -62,27 +62,17 @@ void newProcess(int argc, char* argv[]){
     int pid = fork();
 
     // Handle the process after it's process ID
-    // OBS! all prints, can be removed or commented out
     if (pid < 0) {          // Failed
         fprintf(stderr, "fork failed\n");
-        exit(1);
+        exit(EXIT_FAILURE);
     } else if (pid > 0) {   // Parent
         waitpid(-1, NULL, 0);
 
     } else {                // Child
-        // Construct path string from input
-        char baseStr[] = "/bin/";
-        int sizeOfString = sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(argv[0])/sizeof(argv[0]);
-        char* fullStr = malloc(sizeOfString);
-        fullStr = strcat(baseStr, argv[0]);
 
         // Execute and print error if we get error code back
         int back;
-        if (argc > 1) // If the command has associated arguments
-            back = execvp(fullStr, argv);
-
-        else if (argc == 1) // If there is no arguments alongside the initial command
-            back = execlp(fullStr, "", NULL);
+        back = execvp(argv[0], argv);
 
         // Should only ever be executed if exec fails. Else the image has been overwritten.
         printf("failed to exec, error: %i", back);
