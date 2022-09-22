@@ -16,6 +16,8 @@ int main(void) {
     picture();
 
     for(;;) {
+
+        //printf("shell > ");
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -65,14 +67,13 @@ void newProcess(int argc, char* argv[]){
         fprintf(stderr, "fork failed\n");
         exit(1);
     } else if (pid > 0) {   // Parent
-        printf("Parent, pid: %i\n", pid);
+        //do nothing
 
     } else {                // Child
-        printf("Child, pid: %i\n", pid);
-
         // Construct path string from input
         char baseStr[] = "/bin/";
-        char* fullStr = malloc(sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(argv[0])/sizeof(argv[0]));
+        int sizeOfString = sizeof(baseStr)/sizeof(baseStr[0]) + sizeof(argv[0])/sizeof(argv[0]);
+        char* fullStr = malloc(sizeOfString);
         fullStr = strcat(baseStr, argv[0]);
 
         // Execute and print error if we get error code back
