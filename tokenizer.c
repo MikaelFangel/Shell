@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
+void parser(char *argv[]);
 void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
 void picture();
@@ -38,7 +39,7 @@ int main(void) {
             while((args[argc++] = strtok(NULL, delim)) != NULL);
             args[argc] = NULL;
 
-            newProcess(args);
+            parser(args);
         }
     }
 
@@ -57,6 +58,23 @@ int main(void) {
 
     // pipeProcesses(args1, args2);
     exit(EXIT_SUCCESS);
+}
+
+/*
+Parses the argv array to determine if is should start
+a new process or i should pipe the processes.
+*/
+void parser(char *argv[]) {
+    int containsPipe = 0;
+    for(int i = 0; argv[i] != NULL; i++) {
+        if(strstr(argv[i], "|") != NULL)
+            containsPipe = 1;
+    }
+
+    if(!containsPipe)
+        newProcess(argv);
+    else // Piping goes here!
+        puts("Piping not implemented yet");
 }
 
 void newProcess(char* argv[]){
