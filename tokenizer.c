@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
-void newProcess(int argc, char* argv[]);
+void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
 void picture();
 
@@ -18,6 +18,8 @@ int main(void) {
     for(;;) {
 
         printf("shell -> ");
+        fflush(stdout);
+        
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -36,7 +38,7 @@ int main(void) {
             while((args[argc++] = strtok(NULL, delim)) != NULL);
             args[argc] = NULL;
 
-            newProcess(argc, args);
+            newProcess(args);
         }
     }
 
@@ -57,7 +59,7 @@ int main(void) {
     exit(EXIT_SUCCESS);
 }
 
-void newProcess(int argc, char* argv[]){
+void newProcess(char* argv[]){
     // Fork Process
     int pid = fork();
 
@@ -69,13 +71,11 @@ void newProcess(int argc, char* argv[]){
         waitpid(-1, NULL, 0);
 
     } else {                // Child
-
-        // Execute and print error if we get error code back
-        int back;
-        back = execvp(argv[0], argv);
+                            // Execute and print error if we get error code back
+        int back = execvp(argv[0], argv);
 
         // Should only ever be executed if exec fails. Else the image has been overwritten.
-        printf("failed to exec, error: %i", back);
+        printf("failed to exec, error: %d\n", back);
     }
 }
 
