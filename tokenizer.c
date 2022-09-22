@@ -17,7 +17,7 @@ int main(void) {
 
     for(;;) {
 
-        //printf("shell > ");
+        printf("shell -> ");
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -67,7 +67,7 @@ void newProcess(int argc, char* argv[]){
         fprintf(stderr, "fork failed\n");
         exit(1);
     } else if (pid > 0) {   // Parent
-        //do nothing
+        waitpid(-1, NULL, 0);
 
     } else {                // Child
         // Construct path string from input
