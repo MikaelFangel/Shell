@@ -94,6 +94,7 @@ void newProcess(char* argv[]){
 
         // Should only ever be executed if exec fails. Else the image has been overwritten.
         printf("failed to exec, error: %d\n", back);
+        exit(EXIT_FAILURE);
     }
 }
 
