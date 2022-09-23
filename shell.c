@@ -16,24 +16,16 @@ int main(void) {
     size_t len = 0;
     ssize_t nread;
 
-<<<<<<< HEAD
-    for(;;) { // Alternative while true loop :)
-=======
     welcomeMsg();
 
-    for(;;) {
->>>>>>> c9733199fda637565dafa271e9916190db80aaef
+    for(;;) { // Alternative while true loop :)
 
         char *working_dir = getcwd(NULL, 0);
         printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
         free(working_dir);
-<<<<<<< HEAD
         
         // Read input
-=======
-
->>>>>>> c9733199fda637565dafa271e9916190db80aaef
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -86,20 +78,11 @@ void parser(int argc, char *argv[]) {
                 changeDir(argv[1]);
             else 
                 changeDir(NULL);
-<<<<<<< HEAD
              
         else // Start new process   
             newProcess(argv);  
 
     else // Piping
-=======
-        }
-
-        else
-            newProcess(argv);
-    }
-    else
->>>>>>> c9733199fda637565dafa271e9916190db80aaef
         pipeProcesses(argv, nextargv);
 }
 
