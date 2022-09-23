@@ -15,8 +15,10 @@ int main(void) {
 
     for(;;) {
 
-        printf("shell -> ");
+        char *working_dir = getcwd(NULL, 0);
+        printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
+        free(working_dir);
         
         nread = getline(&line, &len, stdin);
 
