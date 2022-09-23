@@ -9,21 +9,31 @@ void parser(int argc, char *argv[]);
 void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
 void changeDir(char* path);
-void picture();
+void welcomeMsg();
 
 int main(void) {
     char *line = NULL; // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
 
+<<<<<<< HEAD
     for(;;) { // Alternative while true loop :)
+=======
+    welcomeMsg();
+
+    for(;;) {
+>>>>>>> c9733199fda637565dafa271e9916190db80aaef
 
         char *working_dir = getcwd(NULL, 0);
         printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
         free(working_dir);
+<<<<<<< HEAD
         
         // Read input
+=======
+
+>>>>>>> c9733199fda637565dafa271e9916190db80aaef
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
@@ -51,9 +61,9 @@ int main(void) {
 }
 
 /*
-Parses the argv array to determine if is should start
-a new process or i should pipe the processes.
-*/
+   Parses the argv array to determine if is should start
+   a new process or i should pipe the processes.
+ */
 void parser(int argc, char *argv[]) {
     int containsPipe = 0;
     char **nextargv; 
@@ -76,11 +86,20 @@ void parser(int argc, char *argv[]) {
                 changeDir(argv[1]);
             else 
                 changeDir(NULL);
+<<<<<<< HEAD
              
         else // Start new process   
             newProcess(argv);  
 
     else // Piping
+=======
+        }
+
+        else
+            newProcess(argv);
+    }
+    else
+>>>>>>> c9733199fda637565dafa271e9916190db80aaef
         pipeProcesses(argv, nextargv);
 }
 
@@ -169,7 +188,7 @@ void changeDir(char* path) {
     // Check if the path is relative to the home path
     if (path[0] == '~'){
         char* homepath = getenv("HOME");
-        
+
         // Remove tilde from path
         char substr[max_path_buff];
         strncpy(substr, &path[1], max_path_buff);
@@ -207,3 +226,14 @@ void changeDir(char* path) {
     }
 }
 
+void welcomeMsg() { 
+puts("                    _"); 
+puts("                   | |");
+puts("     ___  _ __  ___| |__");
+puts("    / _ \\| '_ \\/ __| '_ \\");
+puts("    |(_) | |_) \\__ \\ | | |");
+puts("    \\___/| .__/|___/_| |_|");
+puts("         | |");
+puts("         |_|");
+puts("");
+}
