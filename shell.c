@@ -79,11 +79,10 @@ void newProcess(char* argv[]){
         waitpid(-1, NULL, 0);
 
     } else {                // Child
-                            // Execute and print error if we get error code back
-        int back = execvp(argv[0], argv);
+        execvp(argv[0], argv);
 
-        // Should only ever be executed if exec fails. Else the image has been overwritten.
-        printf("failed to exec, error: %d\n", back);
+        // Print if execvp fails because then command is not found
+        puts("Command not found...");
         exit(EXIT_FAILURE);
     }
 }
