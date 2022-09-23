@@ -158,7 +158,8 @@ void changeDir(char* path) {
 
     // If no path is provided default to root
     if (path == NULL){
-        changeDir("/");
+        char home[2] = "~";
+        changeDir(home);
         return;
     }
 
