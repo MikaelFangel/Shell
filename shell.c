@@ -3,10 +3,13 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
-void parser(char *argv[]);
+
+void parser(int argc, char *argv[]);
 void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
+void changeDir(char* path);
 void picture();
 
 int main(void) {
@@ -39,11 +42,12 @@ int main(void) {
             while((args[argc++] = strtok(NULL, delim)) != NULL);
             args[argc] = NULL;
 
-            parser(args);
+            parser(argc, args);
         }
     }
 
     free(line);
+
 
     // Temp demo for piping
     // char *args1[3];
@@ -64,15 +68,24 @@ int main(void) {
 Parses the argv array to determine if is should start
 a new process or i should pipe the processes.
 */
-void parser(char *argv[]) {
+void parser(int argc, char *argv[]) {
     int containsPipe = 0;
     for(int i = 0; argv[i] != NULL; i++) {
         if(strstr(argv[i], "|") != NULL)
             containsPipe = 1;
     }
 
-    if(!containsPipe)
-        newProcess(argv);
+    if(!containsPipe){
+        if (strcmp(argv[0], "cd") == 0){
+            if (argc > 1)
+                changeDir(argv[1]);
+            else 
+                changeDir(NULL);
+        }
+            
+        else
+            newProcess(argv);
+    }
     else // Piping goes here!
         puts("Piping not implemented yet");
 }
@@ -146,6 +159,56 @@ void pipeProcesses(char *argvfrom[], char *argvto[]) {
                     waitpid(-1, NULL, 0);
                     waitpid(-1, NULL, 0);
             }
+    }
+}
+
+void changeDir(char* path) {
+    const int max_path_buff = 4096;
+
+    bool relative = false;
+
+    // If no path is provided default to root
+    if (path == NULL){
+        changeDir("/");
+        return;
+    }
+
+
+    // Check if the path is relative to the home path
+    if (path[0] == '~'){
+        char* homepath = getenv("HOME");
+        
+        // Remove tilde from path
+        char substr[max_path_buff];
+        strncpy(substr, &path[1], max_path_buff);
+
+        // Concate the string
+        strcat(homepath, substr);
+        strcpy(path, homepath); // Insert into path
+
+    }
+    // Check if the path provided is relative or absolute
+    else if (path[0] != '/') {
+        relative = true;
+    }
+
+    int returnCode;
+    if (!relative) { // if absolute
+        returnCode = chdir(path); // Change directory
+    }
+    else {  // else it's relative
+        char cwd[4096]; // Max size of path 
+        getcwd(cwd, sizeof(cwd)); // Get current working directory
+
+        // Add '\' between cwd and the relative path
+        strcat(cwd, "/"); 
+        strcat(cwd, path);
+
+        returnCode = chdir(cwd); // Change directory
+    }
+
+    if (returnCode == -1){ // Error
+        printf("Unknown path!\n");
     }
 }
 
