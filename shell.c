@@ -43,19 +43,6 @@ int main(void) {
     }
 
     free(line);
-
-    // Temp demo for piping
-    // char *args1[3];
-    // char *args2[3];
-
-    // args1[0] = "ls";
-    // args1[1] = "-l";
-    // args1[2] = NULL;
-    // args2[0] = "wc";
-    // args2[1] = "-l";
-    // args2[2] = NULL;
-
-    // pipeProcesses(args1, args2);
     exit(EXIT_SUCCESS);
 }
 
@@ -65,15 +52,19 @@ a new process or i should pipe the processes.
 */
 void parser(char *argv[]) {
     int containsPipe = 0;
+    char **nextargv; 
     for(int i = 0; argv[i] != NULL; i++) {
-        if(strstr(argv[i], "|") != NULL)
+        if(strstr(argv[i], "|") != NULL) {
             containsPipe = 1;
+            argv[i] = NULL;
+            nextargv = &argv[i + 1]; 
+        }
     }
 
     if(!containsPipe)
         newProcess(argv);
-    else // Piping goes here!
-        puts("Piping not implemented yet");
+    else
+        pipeProcesses(argv, nextargv);
 }
 
 void newProcess(char* argv[]){
