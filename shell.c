@@ -5,7 +5,6 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-
 void parser(int argc, char *argv[]);
 void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
@@ -13,25 +12,26 @@ void changeDir(char* path);
 void picture();
 
 int main(void) {
-    char *line = NULL;          // Let getline do the heap allocation
+    char *line = NULL; // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
 
-    for(;;) {
+    for(;;) { // Alternative while true loop :)
 
         char *working_dir = getcwd(NULL, 0);
         printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
         free(working_dir);
         
+        // Read input
         nread = getline(&line, &len, stdin);
 
         // Check if there was an error reading the line and free the line pointer if so
         if(nread == -1) {
             free(line);             // free line even upon failure
             exit(EXIT_FAILURE);
-        } else if(nread > 1) {
-
+        } 
+        else if(nread > 1) {
             char *args[nread], delim[] = " \n";
             int argc = 1;
 
@@ -57,6 +57,8 @@ a new process or i should pipe the processes.
 void parser(int argc, char *argv[]) {
     int containsPipe = 0;
     char **nextargv; 
+
+    // Looks if any tokens contains the pipe operator
     for(int i = 0; argv[i] != NULL; i++) {
         if(strstr(argv[i], "|") != NULL) {
             containsPipe = 1;
@@ -65,18 +67,20 @@ void parser(int argc, char *argv[]) {
         }
     }
 
-    if(!containsPipe){
-        if (strcmp(argv[0], "cd") == 0){
+    // Does correct action depending on type of input
+    if(!containsPipe)
+        // If command first token is cd
+        if (strcmp(argv[0], "cd") == 0)
+            // Then use inbuild function to change directory
             if (argc > 1)
                 changeDir(argv[1]);
             else 
                 changeDir(NULL);
-        }
-            
-        else
-            newProcess(argv);
-    }
-    else
+             
+        else // Start new process   
+            newProcess(argv);  
+
+    else // Piping
         pipeProcesses(argv, nextargv);
 }
 
@@ -153,16 +157,14 @@ void pipeProcesses(char *argvfrom[], char *argvto[]) {
 
 void changeDir(char* path) {
     const int max_path_buff = 4096;
-
     bool relative = false;
 
-    // If no path is provided default to root
+    // If no path is provided default to HOME
     if (path == NULL){
         char home[2] = "~";
         changeDir(home);
         return;
     }
-
 
     // Check if the path is relative to the home path
     if (path[0] == '~'){
@@ -175,9 +177,8 @@ void changeDir(char* path) {
         // Concate the string
         strcat(homepath, substr);
         strcpy(path, homepath); // Insert into path
-
     }
-    // Check if the path provided is relative or absolute
+    // Else check if the path provided is relative or absolute
     else if (path[0] != '/') {
         relative = true;
     }
@@ -187,11 +188,15 @@ void changeDir(char* path) {
         returnCode = chdir(path); // Change directory
     }
     else {  // else it's relative
-        char cwd[4096]; // Max size of path 
-        getcwd(cwd, sizeof(cwd)); // Get current working directory
+        char cwd[max_path_buff];
+
+        // Get current working directory to concat the new full path
+        getcwd(cwd, sizeof(cwd)); 
 
         // Add '\' between cwd and the relative path
         strcat(cwd, "/"); 
+
+        // Add the inputed path to the cwd + /
         strcat(cwd, path);
 
         returnCode = chdir(cwd); // Change directory
