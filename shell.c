@@ -17,12 +17,12 @@ int main(void) {
     size_t len = 0;
     ssize_t nread;
 
-    picture();
-
     for(;;) {
 
-        printf("shell -> ");
+        char *working_dir = getcwd(NULL, 0);
+        printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
+        free(working_dir);
         
         nread = getline(&line, &len, stdin);
 
@@ -47,20 +47,6 @@ int main(void) {
     }
 
     free(line);
-
-
-    // Temp demo for piping
-    // char *args1[3];
-    // char *args2[3];
-
-    // args1[0] = "ls";
-    // args1[1] = "-l";
-    // args1[2] = NULL;
-    // args2[0] = "wc";
-    // args2[1] = "-l";
-    // args2[2] = NULL;
-
-    // pipeProcesses(args1, args2);
     exit(EXIT_SUCCESS);
 }
 
@@ -70,9 +56,13 @@ a new process or i should pipe the processes.
 */
 void parser(int argc, char *argv[]) {
     int containsPipe = 0;
+    char **nextargv; 
     for(int i = 0; argv[i] != NULL; i++) {
-        if(strstr(argv[i], "|") != NULL)
+        if(strstr(argv[i], "|") != NULL) {
             containsPipe = 1;
+            argv[i] = NULL;
+            nextargv = &argv[i + 1]; 
+        }
     }
 
     if(!containsPipe){
@@ -86,8 +76,8 @@ void parser(int argc, char *argv[]) {
         else
             newProcess(argv);
     }
-    else // Piping goes here!
-        puts("Piping not implemented yet");
+    else
+        pipeProcesses(argv, nextargv);
 }
 
 void newProcess(char* argv[]){
@@ -102,11 +92,10 @@ void newProcess(char* argv[]){
         waitpid(-1, NULL, 0);
 
     } else {                // Child
-                            // Execute and print error if we get error code back
-        int back = execvp(argv[0], argv);
+        execvp(argv[0], argv);
 
-        // Should only ever be executed if exec fails. Else the image has been overwritten.
-        printf("failed to exec, error: %d\n", back);
+        // Print if execvp fails because then command is not found
+        puts("Command not found...");
         exit(EXIT_FAILURE);
     }
 }
@@ -212,20 +201,3 @@ void changeDir(char* path) {
     }
 }
 
-void picture(){
-    printf("Welcome\n\n");
-    //stolen at https://www.asciiart.eu/computers/computers
-    printf("   _______________                        |*\\_/*|________\n");
-    printf("  |  ___________  |     .-.     .-.      ||_/-\\_|______  |\n");
-    printf("  | |           | |    .****. .****.     | |           | |\n");
-    printf("  | |   0   0   | |    .*****.*****.     | |   0   0   | |\n");
-    printf("  | |     -     | |     .*********.      | |     -     | |\n");
-    printf("  | |   \\___/   | |      .*******.       | |   \\___/   | |\n");
-    printf("  | |___     ___| |       .*****.        | |___________| |\n");
-    printf("  |_____|\\_/|_____|        .***.         |_______________|\n");
-    printf("    _|__|/ \\|_|_.............*.............._|________|_\n");
-    printf("   / ********** \\                          / ********** \\\n");
-    printf(" /  ************  \\                      /  ************  \\\n");
-    printf("--------------------                    --------------------\n");
-    printf("\n\n\n");
-}
