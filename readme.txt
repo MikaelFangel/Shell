@@ -43,7 +43,18 @@ MANUAL
 
 CONCEPTS
     System Calls
-        
+       An interface between the operating system and program. The operation system provides services(or System Calls) that enables programs to to interact with the operating system. Some of these system calls have been used to create the shell.
+
+       - fork() is a system call to create a new child process that is identical to the parent process ie. the process that created the new process. fork() returns negative when unsuccessful, zero in the child when succesfull and a positive value equal to the child PID in the parent. 
+
+       - exec() is a family of functions that replaces the current process image with a new process image. We have used execvp(const char *file, char *const argv[]) where the first argument is the name of the binary file to be executed. These files can in Ubuntu be found at '/usr/bin' and is named by the command "ls", "rm", "mkdir", etc. The second argument char *const argv[] is an array of pointers to null-terminated strings that represent the argument list available to the new program. Since the current process is replaced, there is only a return value if it was unsuccessful. 
+
+       - waitpid() are used to wait for a child to be terminated of the parent process. 
+
+       - pipe(int pipefd[2]) is used to transfer the output from one process to another process as input. The array pipefd is used to return two file descriptors referring to the ends of the pipe. pipefd[0] refers to the read end of the pipe.  pipefd[1] refers to the write end of the pipe.
+
+       - chdir(const char *path) takes a path as parameter to change the working directory. To take absolute paths into account, as well as ‘cd ~’, ‘cd .’ , and no path ‘cd’, we have to process and manipulate the path string.
+
     I/O Redirection
         
     Program Environment
