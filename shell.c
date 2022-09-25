@@ -8,6 +8,7 @@
 void parser(int argc, char *argv[]);
 void newProcess(char* argv[]);
 void pipeProcesses(char *argvfrom[], char *argvto[]);
+void pipeLine(char **args[], int count);
 void changeDir(char* path);
 void welcomeMsg();
 
@@ -15,6 +16,8 @@ int main(void) {
     char *line = NULL; // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
+    int count = 20;
+    int fd[count][2];
 
     welcomeMsg();
 
@@ -24,7 +27,7 @@ int main(void) {
         printf("%s@%s -> ", getlogin(), working_dir);
         fflush(stdout);
         free(working_dir);
-        
+
         // Read input
         nread = getline(&line, &len, stdin);
 
@@ -58,14 +61,14 @@ int main(void) {
  */
 void parser(int argc, char *argv[]) {
     int containsPipe = 0;
-    char **nextargv; 
+    char **nextargv[argc];
+    nextargv[0] = &argv[0];
 
     // Looks if any tokens contains the pipe operator
     for(int i = 0; argv[i] != NULL; i++) {
         if(strstr(argv[i], "|") != NULL) {
-            containsPipe = 1;
             argv[i] = NULL;
-            nextargv = &argv[i + 1]; 
+            nextargv[++containsPipe] = &argv[i + 1]; 
         }
     }
 
@@ -78,12 +81,12 @@ void parser(int argc, char *argv[]) {
                 changeDir(argv[1]);
             else 
                 changeDir(NULL);
-             
+
         else // Start new process   
             newProcess(argv);  
 
     else // Piping
-        pipeProcesses(argv, nextargv);
+        pipeLine(nextargv, containsPipe + 1);
 }
 
 void newProcess(char* argv[]){
@@ -103,6 +106,56 @@ void newProcess(char* argv[]){
         // Print if execvp fails because then command is not found
         puts("Command not found...");
         exit(EXIT_FAILURE);
+    }
+}
+
+void pipeLine(char **args[], int count) {
+    int fd[count][2];
+    for(int i = 0; i < count; i++) {
+        pipe(fd[i]);
+    }
+
+    for(int i = 0; i < count; i++) {
+        // printf("%s count: %d\n", *args[i], i);
+        switch(fork()) {
+            case -1:
+                // Error occured
+                exit(EXIT_FAILURE);
+
+            case 0:
+                // If it is not the first command
+                if(i > 0) 
+                    dup2(fd[i][0], 0);
+
+                // If it is not the last command
+                if(i < count - 1) 
+                    dup2(fd[i][1], 1);
+
+                for(int j = 0; j < count; j++) {
+                     close(fd[j][0]);
+                     close(fd[j][1]);
+                }
+
+                
+                char *argv[3];
+                if(i == 0) {
+                    argv[0] = "ls";
+                    argv[1] = "-l";
+                    argv[2] = NULL;
+                } else {
+                    argv[0] = "wc";
+                    argv[1] = "-l";
+                    argv[2] = NULL;
+                }
+
+                execvp(argv[0], argv);
+
+                // execvp(*args[i], args[i]);
+        }
+    }
+    for(int i = 0; i < count; i++) {
+        close(fd[i][0]);
+        close(fd[i][1]);
     }
 }
 
@@ -210,13 +263,13 @@ void changeDir(char* path) {
 }
 
 void welcomeMsg() { 
-puts("                    _"); 
-puts("                   | |");
-puts("     ___  _ __  ___| |__");
-puts("    / _ \\| '_ \\/ __| '_ \\");
-puts("    |(_) | |_) \\__ \\ | | |");
-puts("    \\___/| .__/|___/_| |_|");
-puts("         | |");
-puts("         |_|");
-puts("");
+    puts("                    _"); 
+    puts("                   | |");
+    puts("     ___  _ __  ___| |__");
+    puts("    / _ \\| '_ \\/ __| '_ \\");
+    puts("    |(_) | |_) \\__ \\ | | |");
+    puts("    \\___/| .__/|___/_| |_|");
+    puts("         | |");
+    puts("         |_|");
+    puts("");
 }
