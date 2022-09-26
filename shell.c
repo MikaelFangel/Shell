@@ -158,6 +158,9 @@ void pipeLine(char **args[], int count) {
         close(fd[i][0]);
         close(fd[i][1]);
     }
+    
+    for(int i = 0; i < count - 1; i++) 
+        waitpid(-1, NULL, 0);
 }
 
 void changeDir(char* path) {
