@@ -20,8 +20,6 @@ int main(void) {
     char *line = NULL; // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
-    int count = 20;
-    int fd[count][2];
 
     welcomeMsg();
 
@@ -127,25 +125,26 @@ void readHistory() {
 }
 
 void newProcess(char* argv[]){
-    // Fork Process
-    int pid = fork();
-
     // Handle the process after it's process ID
-    if (pid < 0) {          // Failed
-        fprintf(stderr, "fork failed\n");
-        exit(EXIT_FAILURE);
-    } else if (pid > 0) {   // Parent
-        waitpid(-1, NULL, 0);
+    switch(fork()){          // Failed
+        case -1:
+            fprintf(stderr, "fork failed\n");
+            exit(EXIT_FAILURE);
 
-    } else {                // Child
-        char *env[2];
-        env[0] = getenv("PATH");
-        env[1] = NULL;
-        execvpe(argv[0], argv, env);
+        case 0:             // Child
+            // Get the PATH environment variable and null terminate it
+            char *env[2];
+            env[0] = getenv("PATH");
+            env[1] = NULL;
 
-        // Print if execvp fails because then command is not found
-        puts("Command not found...");
-        exit(EXIT_FAILURE);
+            execvpe(argv[0], argv, env);
+
+            // Print if execvp fails because then command is not found
+            puts("Command not found...");
+            exit(EXIT_FAILURE);
+
+        default:            // Parent
+            waitpid(-1, NULL, 0);
     }
 }
 
@@ -194,7 +193,7 @@ void pipeLine(char **args[], int count) {
         close(fd[i][1]);
     }
     
-    for(int i = 0; i < count - 1; i++) 
+    for(int i = 0; i < count; i++) 
         waitpid(-1, NULL, 0);
 }
 
@@ -204,22 +203,26 @@ void changeDir(char* path) {
 
     // If no path is provided default to HOME
     if (path == NULL){
-        char home[2] = "~";
-        changeDir(home);
+        chdir(getenv("HOME"));
         return;
     }
 
     // Check if the path is relative to the home path
     if (path[0] == '~'){
         char* homepath = getenv("HOME");
+        char* homepathCopy = malloc(max_path_buff * sizeof(char)); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+        strcpy(homepathCopy, homepath);
 
         // Remove tilde from path
         char substr[max_path_buff];
         strncpy(substr, &path[1], max_path_buff);
 
         // Concate the string
-        strcat(homepath, substr);
-        strcpy(path, homepath); // Insert into path
+        strcat(homepathCopy, substr);
+        strcpy(path, homepathCopy); // Insert into path
+
+        // Free memory
+        free(homepathCopy);
     }
     // Else check if the path provided is relative or absolute
     else if (path[0] != '/') {
@@ -245,6 +248,7 @@ void changeDir(char* path) {
         returnCode = chdir(cwd); // Change directory
     }
 
+    
     if (returnCode == -1){ // Error
         printf("Unknown path!\n");
     }
