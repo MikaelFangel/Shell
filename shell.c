@@ -6,15 +6,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-
-void parser(int argc, char *argv[]);
-void newProcess(char* argv[]);
-void pipeProcesses(char *argvfrom[], char *argvto[]);
-void pipeLine(char **args[], int count);
-void changeDir(char* path);
-void welcomeMsg();
-void addHistory(char *argv[]);
-void readHistory();
+#include "shell.h"
 
 int main(void) {
     char *line = NULL; // Let getline do the heap allocation
