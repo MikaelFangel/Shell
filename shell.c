@@ -125,7 +125,7 @@ void pipeLine(char **args[], int count) {
             case 0:
                 // If it is not the first command
                 if(i > 0) 
-                    dup2(fd[i][0], 0);
+                    dup2(fd[i - 1][0], 0);
 
                 // If it is not the last command
                 if(i < count - 1) 
@@ -135,78 +135,14 @@ void pipeLine(char **args[], int count) {
                      close(fd[j][0]);
                      close(fd[j][1]);
                 }
-
                 
-                char *argv[3];
-                if(i == 0) {
-                    argv[0] = "ls";
-                    argv[1] = "-l";
-                    argv[2] = NULL;
-                } else {
-                    argv[0] = "wc";
-                    argv[1] = "-l";
-                    argv[2] = NULL;
-                }
-
-                execvp(argv[0], argv);
-
-                // execvp(*args[i], args[i]);
+                execvp(*args[i], args[i]);
+                exit(EXIT_FAILURE);
         }
     }
     for(int i = 0; i < count; i++) {
         close(fd[i][0]);
         close(fd[i][1]);
-    }
-}
-
-void pipeProcesses(char *argvfrom[], char *argvto[]) {
-    int fd[2];
-    pipe(fd);
-
-    switch (fork()) {
-        case 0:
-            // Close the write end of the pipe
-            close(fd[1]);
-
-            // Redirect stdin to read end 
-            dup2(fd[0], 0);
-
-            // Close the read end
-            close(fd[0]);
-
-            // Execute argv 0 with the output from the child process
-            execvp(argvto[0], argvto);
-
-            // Exit with failure if reached
-            exit(EXIT_FAILURE);
-
-        default:
-            switch(fork()) {
-                case 0:
-                    // Close the read end of the pipe
-                    close(fd[0]);
-
-                    // Redirect write end to stdout 
-                    dup2(fd[1], 1);
-
-                    // Close file descriptor for the write end
-                    close(fd[1]);
-
-                    // Execute argv 0 and write to stdout
-                    execvp(argvfrom[0], argvfrom);
-
-                    // Exit with failure if reached
-                    exit(EXIT_FAILURE);
-
-                default:
-                    // Close file descriptors
-                    close(fd[0]);
-                    close(fd[1]);
-
-                    // Wait for two processes to finish
-                    waitpid(-1, NULL, 0);
-                    waitpid(-1, NULL, 0);
-            }
     }
 }
 
