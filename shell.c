@@ -269,10 +269,8 @@ void changeDir(char* path) {
         returnCode = chdir(path); // Change directory
     }
     else {  // else it's relative
-        char cwd[max_path_buff];
-
         // Get current working directory to concat the new full path
-        getcwd(cwd, sizeof(cwd)); 
+        char *cwd = getcwd(NULL, 0); 
 
         // Add '\' between cwd and the relative path
         strcat(cwd, "/"); 
@@ -281,6 +279,7 @@ void changeDir(char* path) {
         strcat(cwd, path);
 
         returnCode = chdir(cwd); // Change directory
+        free(cwd);
     }
 
     
