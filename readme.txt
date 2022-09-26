@@ -66,7 +66,9 @@ CONCEPTS
        - getenv(char* name) is used to fetch a pointer to the value where the enviroment variable's path is held. Manipulating the value returned from this function would alter the actual value at this memmory address. This however is only process specific and would not result in corruption of ones system. No copy of the value is made, that has to be done by ourselves.
 
     I/O Redirection
-        
+        We have only implemented I/O redirection through the use of pipes (or the pipe operator '|'). Use of the pipe operator in the shell is described in the 'Manual for use' section.
+        We have not had time to support the 'greater than' operator '>', which normally allows the user to redirect the output of a program, like pipe, but to a file instead.
+
     Program Environment
         
     Background Program Execution
