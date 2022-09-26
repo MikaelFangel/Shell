@@ -157,7 +157,7 @@ void pipeLine(char **args[], int count) {
         close(fd[i][1]);
     }
     
-    for(int i = 0; i < count - 1; i++) 
+    for(int i = 0; i < count; i++) 
         waitpid(-1, NULL, 0);
 }
 
