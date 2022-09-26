@@ -6,7 +6,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <stdbool.h>
-#include "shell.h"
+#include "shell.h" // ""'s to makes the compiler look for the header file in the same directory <>'s would not.
 
 int main(void) {
     char *line = NULL; // Let getline do the heap allocation
