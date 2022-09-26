@@ -74,4 +74,5 @@ CONCEPTS
         We have not had time to support the 'greater than' operator '>', which normally allows the user to redirect the output of a program, like pipe, but to a file instead.
 
     Program Environment
-        The Shell is to be executed from within a terminal. The Shell has 
+        The Shell is to be executed from within a terminal (another shell). The shell has no window or UI, its purely text-based. This means that the shell has to be ran within another shell. The Shell will be running as a process within the hosted shell. Its a shell running a shell. This means, that whenever our shell exits, the hosting shell will still be running. This is because the hosting shell will be waiting for our shell's process to finish before moving on. 
+        
