@@ -11,7 +11,13 @@ DESCRIPTION
     - The shell supports piping between proceses, using the pipe operator '|'. The shell supports pipe-chaining, meaning you can create pipes between multiple         processes in a single command to the shell. 
 
 
-MANUAL
+MANUAL for setup
+    1. Extract the zip file.
+    2. Navigate to the extracted directory with a terminal.
+    3. Type 'make'.
+    4. To start the program, type '.\shell' in the terminal.
+
+MANUAL for use
     Starting the shell
     1. Navigate to the directory the "shell" file is located.
     2. Use the BASH command: "./shell", this starts the shell within your OS's shell.
