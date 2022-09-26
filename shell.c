@@ -30,7 +30,7 @@ int main(void) {
             exit(EXIT_FAILURE);
         } 
         else if(nread > 1) {
-            char **args = (char**) calloc(nread / 2, sizeof(char**));
+            char **args = (char**) calloc(nread, sizeof(char**));
             char delim[] = " \n";
             int argc = 1;
 
