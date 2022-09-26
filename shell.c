@@ -167,22 +167,26 @@ void changeDir(char* path) {
 
     // If no path is provided default to HOME
     if (path == NULL){
-        char home[2] = "~";
-        changeDir(home);
+        chdir(getenv("HOME"));
         return;
     }
 
     // Check if the path is relative to the home path
     if (path[0] == '~'){
         char* homepath = getenv("HOME");
+        char* homepathCopy = malloc(max_path_buff * sizeof(char)); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+        strcpy(homepathCopy, homepath);
 
         // Remove tilde from path
         char substr[max_path_buff];
         strncpy(substr, &path[1], max_path_buff);
 
         // Concate the string
-        strcat(homepath, substr);
-        strcpy(path, homepath); // Insert into path
+        strcat(homepathCopy, substr);
+        strcpy(path, homepathCopy); // Insert into path
+
+        // Free memory
+        free(homepathCopy);
     }
     // Else check if the path provided is relative or absolute
     else if (path[0] != '/') {
@@ -208,6 +212,7 @@ void changeDir(char* path) {
         returnCode = chdir(cwd); // Change directory
     }
 
+    
     if (returnCode == -1){ // Error
         printf("Unknown path!\n");
     }
