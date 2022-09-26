@@ -68,7 +68,7 @@ CONCEPTS
         We have only implemented I/O redirection through the use of pipes (or the pipe operator '|'). Use of the pipe operator in the shell is described in the 'Manual for use' section.
         The way we redirect streams are by using the file descriptor '0' and '1'. '0' is the standard input, and '1' is the standard output stream. What we do is that we basically map the file descriptor created for the pipe to a respective standard input or output stream. Lets take an example:
         Lets say we want the output for a process to go into the file descriptor opened with pipe(). We then duplicate the file descriptor for the read-end of the pipe to stdout (Standard Output) as so: dup2(fd: int, 1), where the '1' is the number for the file descriptor for stdout.
-        This can be done reversly for the read-end, to be mapped to the stdin (Standard Input).
+        This can be done reversly for the read-end, to be mapped to the stdin (Standard Input). [2]
 
         We have not had time to support the 'greater than' operator '>', which normally allows the user to redirect the output of a program, like pipe, but to a file instead.
 
