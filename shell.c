@@ -110,13 +110,13 @@ void newProcess(char* argv[]){
 }
 
 void pipeLine(char **args[], int count) {
+    // Create all pipes needed
     int fd[count][2];
     for(int i = 0; i < count; i++) {
         pipe(fd[i]);
     }
 
     for(int i = 0; i < count; i++) {
-        // printf("%s count: %d\n", *args[i], i);
         switch(fork()) {
             case -1:
                 // Error occured
@@ -131,15 +131,21 @@ void pipeLine(char **args[], int count) {
                 if(i < count - 1) 
                     dup2(fd[i][1], 1);
 
+                // Close file descriptors
                 for(int j = 0; j < count; j++) {
                      close(fd[j][0]);
                      close(fd[j][1]);
                 }
                 
+                // Execute the chosen process as child
                 execvp(*args[i], args[i]);
+
+                // If reached error in exec has occurred
                 exit(EXIT_FAILURE);
         }
     }
+
+    // Close all pipes as the parent process
     for(int i = 0; i < count; i++) {
         close(fd[i][0]);
         close(fd[i][1]);
