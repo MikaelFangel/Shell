@@ -50,19 +50,19 @@ CONCEPTS
     System Calls
        An interface between the operating system and program. The operation system provides services(or System Calls) that enables programs to to interact with the operating system. Some of these system calls have been used to create the shell.
 
-       - fork() is a system call to create a new child process that is identical to the parent process ie. the process that created the new process. fork() returns negative when unsuccessful, zero in the child when succesfull and a positive value equal to the child PID in the parent. 
+       - fork() is a system call to create a new child process that is identical to the parent process ie. the process that created the new process. fork() returns negative when unsuccessful, zero in the child when succesfull and a positive value equal to the child PID in the parent. [4]
 
-       - exec() is a family of functions that replaces the current process image with a new process image. We have used execvp(const char *file, char *const argv[]) where the first argument is the name of the binary file to be executed. These files can in Ubuntu be found at '/usr/bin' and is named by the command "ls", "rm", "mkdir", etc. The second argument char *const argv[] is an array of pointers to null-terminated strings that represent the argument list available to the new program. Since the current process is replaced, there is only a return value if it was unsuccessful. 
+       - exec() is a family of functions that replaces the current process image with a new process image. We have used execvpe(const char *file, char *const argv[], char *const envp[]) where the first argument is the name of the binary file to be executed. These files can be found in the users PATH  and is named by the command "ls", "rm", "mkdir", etc. The second argument char *const argv[] is an array of pointers to null-terminated strings that represent the argument list available to the new program. This list start with the current command at hand and end with a NULL pointer to mark the end. The last argument to execvpe is our environment and in our case the PATH variable which is use to tell where to look for the binary files. Since the current process is replaced, there is only a return value if it was unsuccessful. [3]
 
-       - waitpid() are used to wait for a child to be terminated of the parent process. 
+       - waitpid() are used to wait for a child to be terminated of the parent process. [5]
 
-       - pipe(int pipefd[2]) is used to transfer the output from one process to another process as input. The array pipefd is used to return two file descriptors referring to the ends of the pipe. pipefd[0] refers to the read end of the pipe.  pipefd[1] refers to the write end of the pipe.
+       - pipe(int pipefd[2]) is used to transfer the output from one process to another process as input. The array pipefd is used to return two file descriptors referring to the ends of the pipe. pipefd[0] refers to the read end of the pipe.  pipefd[1] refers to the write end of the pipe. [2]
 
-       - dup2(int oldfd, int newfd) creates a copy of the old file descriptor and dublicates it to the new file descriptor. Closing and reusing these file descriptors are done automatically, which makes is easier to use, than dub(). 
+       - dup2(int oldfd, int newfd) creates a copy of the old file descriptor and dublicates it to the new file descriptor. Closing and reusing these file descriptors are done automatically, which makes is easier to use, than dub(). [1]
 
-       - chdir(const char *path) takes a path as parameter to change the working directory. To take absolute paths into account, as well as ‘cd ~’, ‘cd .’ , and no path ‘cd’, we have to process and manipulate the path string.
+       - chdir(const char *path) takes a path as parameter to change the working directory. To take absolute paths into account, as well as ‘cd ~’, ‘cd .’ , and no path ‘cd’, we have to process and manipulate the path string. [7]
 
-       - getenv(char* name) is used to fetch a pointer to the value where the enviroment variable's path is held. Manipulating the value returned from this function would alter the actual value at this memmory address. This however is only process specific and would not result in corruption of ones system. No copy of the value is made, that has to be done by ourselves.
+       - getenv(char* name) is used to fetch a pointer to the value where the enviroment variable's path is held. Manipulating the value returned from this function would alter the actual value at this memmory address. This however is only process specific and would not result in corruption of ones system. No copy of the value is made, that has to be done by ourselves. [11]
 
     I/O Redirection
         
