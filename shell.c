@@ -18,8 +18,6 @@ int main(void) {
     char *line = NULL; // Let getline do the heap allocation
     size_t len = 0;
     ssize_t nread;
-    int count = 20;
-    int fd[count][2];
 
     welcomeMsg();
 
