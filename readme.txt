@@ -6,16 +6,16 @@ DESCRIPTION
     - The shell has the ability to execute any program placed in the /bin/ folder on Linux systems, such as ls, wc, pwd with zero or more arguments.
 
     - The shell support the cd command (Change Diretory). cd supports absolute and relative pathing. Absolute paths have to start with '/', whereas relative does not.
-      the cd command also supports using '~' (HOME path) to refere to the homepath enviroment variable. Using cd with no arguments, defaults the users working directory to HOME.
+      The cd command also supports using '~' (HOME path) to refere to the homepath enviroment variable. Using cd with no arguments, changes by default the users working directory to HOME.
 
-    - The shell supports piping between proceses, using the pipe operator '|'. The shell supports pipe-chaining, meaning you can create pipes between multiple         processes in a single command to the shell. 
+    - The shell supports piping between proceses, using the pipe operator '|'. The shell supports pipe-chaining, meaning you can create pipes between multiple processes in a single command to the shell. 
 
 
 MANUAL for setup
     1. Extract the zip file.
     2. Navigate to the extracted directory with a terminal.
     3. Type 'make'.
-    4. To start the program, type '.\shell' in the terminal.
+    4. To start the program, type './shell' in the terminal.
 
 MANUAL for use
     Starting the shell
@@ -37,9 +37,8 @@ MANUAL for use
     - To move back a directory use "cd .." to chain these do "cd ../../..".
 
     Using commands
-    - You can use all commands that are in the "/bin" directory on Linux.
+    - You can use all commands that are in your PATH.
     - This means that the shell supports: "wc", "pwd", "ls", "cat", "curl" and many more. All theses commands accept zero or more arguments.
-    - Use "ls /bin/" from any directory to get a complete list of all commands supported.
 
     Process Piping
     - You can pipe an output from a process as an input for another. You can do this using the pipe operator '|' between commands.
@@ -71,3 +70,15 @@ CONCEPTS
         
     Background Program Execution
         
+BIBLIOGRAPHY
+    [1]     IEEE/The Open Group (2017, bash dup2 manual page)
+    [2]     IEEE/The Open Group (2017, bash pipe manual page)
+    [3]     GNU (2021, bash execvpe manual page)
+    [4]     Free Software Foundation (2018, bash fork manual page)
+    [5]     IEEE/The Open Group (2017, bash waitpid manual page)
+    [6]     IEEE/The Open Group (2017, bash wait manual page)
+    [7]     IEEE/The Open Group (2017, bash chdir manual page)
+    [8]     GNU (2021, bash getline manual page)
+    [9]     GNU (2021, bash strtok manual page)
+    [10]    IEEE/The Open Group (2017, bash environ manual page)
+    [11]    GNU (2021, bash getenv manual page)
