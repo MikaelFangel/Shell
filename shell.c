@@ -14,7 +14,7 @@ void pipeLine(char **args[], int count);
 void changeDir(char* path);
 void welcomeMsg();
 void addHistory(char *argv[]);
-void readHistory();
+void readHistory(char* buf);
 
 int main(void) {
     char *line = NULL; // Let getline do the heap allocation
@@ -65,6 +65,9 @@ void parser(int argc, char *argv[]) {
     int containsPipe = 0;
     char **nextargv[argc];
     nextargv[0] = &argv[0];
+    char his[100];
+
+    //addHistory(argv);
     
     // Looks if any tokens contains the pipe operator
     for(int i = 0; argv[i] != NULL; i++) {
@@ -91,36 +94,39 @@ void parser(int argc, char *argv[]) {
         pipeLine(nextargv, containsPipe + 1);
 }
 
+/*
+ * Add string to a .shell_history file to enable Shell Command history
+ */
 void addHistory(char *argv[]) {
+    // Open file or create if it does not excists
     FILE *fptr;
     fptr = fopen(".shell_history", "a");
 
-    if(fptr == NULL) {
-        printf("Error adding to history");
-    }
-
+    // For each argument write it to the file and add space.
     for (int i = 0; argv[i] != NULL; i++) {
        fputs(argv[i], fptr);
        fputs(" ", fptr);
     }
+    // Add newline to the end of the command
     fputs("\n", fptr);
-
     fclose(fptr);
 }
 
-void readHistory() {
+/*
+ * Read last line from .shell_history file and add it to a character array
+ */
+void readHistory(char* buf) {
+    // Open file
     FILE *fptr;
-    char c;
-
     fptr = fopen(".shell_history", "r");
-    int i = 0;
-    while((c = fgetc(fptr)) != '\n') {
-        fseek(fptr, i, SEEK_END);
-        printf("%c", c);
-        printf("%i", i);
-        i = i - 1;
-    } 
-    printf("Something...");
+
+    while(1) {
+        // Continue reading file line-by-line until EOF, and save each line to the array. 
+        // When the file ends the last line is saved in the array
+        if (fgets(buf, sizeof(buf), fptr) == NULL) {
+            break;
+        }
+    }
     fclose(fptr);
 }
 
