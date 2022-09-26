@@ -13,6 +13,8 @@ void pipeProcesses(char *argvfrom[], char *argvto[]);
 void pipeLine(char **args[], int count);
 void changeDir(char* path);
 void welcomeMsg();
+void addHistory(char *argv[]);
+void readHistory();
 
 int main(void) {
     char *line = NULL; // Let getline do the heap allocation
@@ -65,7 +67,7 @@ void parser(int argc, char *argv[]) {
     int containsPipe = 0;
     char **nextargv[argc];
     nextargv[0] = &argv[0];
-
+    
     // Looks if any tokens contains the pipe operator
     for(int i = 0; argv[i] != NULL; i++) {
         if(strstr(argv[i], "|") != NULL) {
@@ -89,6 +91,39 @@ void parser(int argc, char *argv[]) {
 
     else // Piping
         pipeLine(nextargv, containsPipe + 1);
+}
+
+void addHistory(char *argv[]) {
+    FILE *fptr;
+    fptr = fopen(".shell_history", "a");
+
+    if(fptr == NULL) {
+        printf("Error adding to history");
+    }
+
+    for (int i = 0; argv[i] != NULL; i++) {
+       fputs(argv[i], fptr);
+       fputs(" ", fptr);
+    }
+    fputs("\n", fptr);
+
+    fclose(fptr);
+}
+
+void readHistory() {
+    FILE *fptr;
+    char c;
+
+    fptr = fopen(".shell_history", "r");
+    int i = 0;
+    while((c = fgetc(fptr)) != '\n') {
+        fseek(fptr, i, SEEK_END);
+        printf("%c", c);
+        printf("%i", i);
+        i = i - 1;
+    } 
+    printf("Something...");
+    fclose(fptr);
 }
 
 void newProcess(char* argv[]){
