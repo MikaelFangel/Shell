@@ -90,25 +90,26 @@ void parser(int argc, char *argv[]) {
 }
 
 void newProcess(char* argv[]){
-    // Fork Process
-    int pid = fork();
-
     // Handle the process after it's process ID
-    if (pid < 0) {          // Failed
-        fprintf(stderr, "fork failed\n");
-        exit(EXIT_FAILURE);
-    } else if (pid > 0) {   // Parent
-        waitpid(-1, NULL, 0);
+    switch(fork()){          // Failed
+        case -1:
+            fprintf(stderr, "fork failed\n");
+            exit(EXIT_FAILURE);
 
-    } else {                // Child
-        char *env[2];
-        env[0] = getenv("PATH");
-        env[1] = NULL;
-        execvpe(argv[0], argv, env);
+        case 0:             // Child
+            // Get the PATH environment variable and null terminate it
+            char *env[2];
+            env[0] = getenv("PATH");
+            env[1] = NULL;
 
-        // Print if execvp fails because then command is not found
-        puts("Command not found...");
-        exit(EXIT_FAILURE);
+            execvpe(argv[0], argv, env);
+
+            // Print if execvp fails because then command is not found
+            puts("Command not found...");
+            exit(EXIT_FAILURE);
+
+        default:            // Parent
+            waitpid(-1, NULL, 0);
     }
 }
 
