@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -101,7 +103,10 @@ void newProcess(char* argv[]){
         waitpid(-1, NULL, 0);
 
     } else {                // Child
-        execvp(argv[0], argv);
+        char *env[2];
+        env[0] = getenv("PATH");
+        env[1] = NULL;
+        execvpe(argv[0], argv, env);
 
         // Print if execvp fails because then command is not found
         puts("Command not found...");
@@ -138,7 +143,10 @@ void pipeLine(char **args[], int count) {
                 }
                 
                 // Execute the chosen process as child
-                execvp(*args[i], args[i]);
+                char *env[2];
+                env[0] = getenv("PATH");
+                env[1] = NULL;
+                execvpe(*args[i], args[i], env);
 
                 // If reached error in exec has occurred
                 exit(EXIT_FAILURE);
