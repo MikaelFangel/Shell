@@ -1,11 +1,5 @@
 #define _GNU_SOURCE
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <sys/wait.h>
-#include <stdbool.h>
 #include "shell.h" // ""'s to makes the compiler look for the header file in the same directory <>'s would not.
 
 int main(void) {
