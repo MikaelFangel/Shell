@@ -11,8 +11,13 @@ int main(void) {
 
     for(;;) { // Alternative while true loop :)
 
+        // Get current working directory
         char *working_dir = getcwd(NULL, 0);
+
+        // Print user's path and username
         printf("%s@%s -> ", getlogin(), working_dir);
+
+        // Clean up
         fflush(stdout);
         free(working_dir);
 
@@ -28,13 +33,17 @@ int main(void) {
             char *args[nread], delim[] = " \n";
             int argc = 1;
 
-            args[0] = strtok(line, delim);
+            // Tokenize string
+            args[0] = strtok(line, delim); 
+
+            // if exit has been inputted, exit program
             if(strcmp(args[0], "exit") == 0) break; 
 
             // Read the tokens into args and keep track of number of arguments
             while((args[argc++] = strtok(NULL, delim)) != NULL);
             args[argc] = NULL;
 
+            // Pass the parser the arguments
             parser(argc, args);
         }
     }
@@ -123,6 +132,7 @@ void newProcess(char* argv[]){
             env[0] = getenv("PATH");
             env[1] = NULL;
 
+            // Overwrite program image
             execvpe(argv[0], argv, env);
 
             // Print if execvp fails because then command is not found
