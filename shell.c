@@ -30,7 +30,8 @@ int main(void) {
             exit(EXIT_FAILURE);
         } 
         else if(nread > 1) {
-            char *args[nread], delim[] = " \n";
+            char **args = (char**) malloc(nread / 2 * sizeof(char**));
+            char delim[] = " \n";
             int argc = 1;
 
             // Tokenize string
@@ -45,6 +46,7 @@ int main(void) {
 
             // Pass the parser the arguments
             parser(argc, args);
+            free(args);
         }
     }
 
@@ -62,8 +64,7 @@ void parser(int argc, char *argv[]) {
 
     // Make an array of pointers to all commands within the string
     // to use when there is pipes present
-    char **nextargv[argc];
-
+    char ***nextargv = (char***) calloc (argc / 2, sizeof(char***));
     // Set the first argument (left of pipe)
     nextargv[0] = &argv[0];
     char his[100];
@@ -100,6 +101,8 @@ void parser(int argc, char *argv[]) {
 
     else // If containsPipe > 0 then call the pipeline function
         pipeLine(nextargv, containsPipe + 1);
+
+    free(nextargv);
 }
 
 /*
