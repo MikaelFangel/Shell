@@ -59,7 +59,11 @@ CONCEPTS
 
        - pipe(int pipefd[2]) is used to transfer the output from one process to another process as input. The array pipefd is used to return two file descriptors referring to the ends of the pipe. pipefd[0] refers to the read end of the pipe.  pipefd[1] refers to the write end of the pipe.
 
+       - dup2(int oldfd, int newfd) creates a copy of the old file descriptor and dublicates it to the new file descriptor. Closing and reusing these file descriptors are done automatically, which makes is easier to use, than dub(). 
+
        - chdir(const char *path) takes a path as parameter to change the working directory. To take absolute paths into account, as well as ‘cd ~’, ‘cd .’ , and no path ‘cd’, we have to process and manipulate the path string.
+
+       - getenv(char* name) is used to fetch a pointer to the value where the enviroment variable's path is held. Manipulating the value returned from this function would alter the actual value at this memmory address. This however is only process specific and would not result in corruption of ones system. No copy of the value is made, that has to be done by ourselves.
 
     I/O Redirection
         
