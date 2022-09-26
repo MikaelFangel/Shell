@@ -53,21 +53,34 @@ int main(void) {
 }
 
 /*
-   Parses the argv array to determine if is should start
-   a new process or i should pipe the processes.
+ * Parses the argv array to determine if is should start
+ * a new process or i should pipe the processes.
  */
 void parser(int argc, char *argv[]) {
+    // Used to keep track of how many pipes there is in the input string
     int containsPipe = 0;
+
+    // Make an array of pointers to all commands within the string
+    // to use when there is pipes present
     char **nextargv[argc];
+
+    // Set the first argument (left of pipe)
     nextargv[0] = &argv[0];
     char his[100];
 
     //addHistory(argv);
     
-    // Looks if any tokens contains the pipe operator
+    /* Looks if any tokens contains the pipe operator
+    and populate the nextargv array with locations of commands i */
     for(int i = 0; argv[i] != NULL; i++) {
         if(strstr(argv[i], "|") != NULL) {
+            /* Substitue the pipe with a null pointer so that
+            all argument vectors send to the pipe function
+            arr null terminated i */
             argv[i] = NULL;
+
+            /* Increment the containsPipe before because the first
+            space is alread populated */
             nextargv[++containsPipe] = &argv[i + 1]; 
         }
     }
@@ -82,10 +95,10 @@ void parser(int argc, char *argv[]) {
             else 
                 changeDir(NULL);
 
-        else // Start new process   
+        else // Start new process
             newProcess(argv);  
 
-    else // Piping
+    else // If containsPipe > 0 then call the pipeline function
         pipeLine(nextargv, containsPipe + 1);
 }
 
@@ -125,10 +138,15 @@ void readHistory(char* buf) {
     fclose(fptr);
 }
 
+/*
+ * Start a new process using the execvpe function and return 1 if not found
+ * the functions takes a array of the command and all its flags and then
+ * creates a new child process.
+ */
 void newProcess(char* argv[]){
     // Handle the process after it's process ID
-    switch(fork()){          // Failed
-        case -1:
+    switch(fork()){
+        case -1:            // Forking failed
             fprintf(stderr, "fork failed\n");
             exit(EXIT_FAILURE);
 
@@ -143,13 +161,22 @@ void newProcess(char* argv[]){
 
             // Print if execvp fails because then command is not found
             puts("Command not found...");
+
+            // End the child process to avoid zombies
             exit(EXIT_FAILURE);
 
         default:            // Parent
+            // Wait for the child process to finish
             waitpid(-1, NULL, 0);
     }
 }
 
+/*
+ * Redirects the stdin and stdout and pipes the processes so that
+ * they can communicate. The functions take and array of arguments
+ * where each location in the array are the position of the command
+ * to be executed. Each command with flags should end on a null pointer
+ */
 void pipeLine(char **args[], int count) {
     // Create all pipes needed
     int fd[count][2];
@@ -166,11 +193,11 @@ void pipeLine(char **args[], int count) {
             case 0:
                 // If it is not the first command
                 if(i > 0) 
-                    dup2(fd[i - 1][0], 0);
+                    dup2(fd[i - 1][0], 0);  // Redirect pipe read-end and stdin
 
                 // If it is not the last command
                 if(i < count - 1) 
-                    dup2(fd[i][1], 1);
+                    dup2(fd[i][1], 1);      // Redirect pipe write-end and stdout
 
                 // Close file descriptors
                 for(int j = 0; j < count; j++) {
@@ -195,10 +222,16 @@ void pipeLine(char **args[], int count) {
         close(fd[i][1]);
     }
     
+    // Wait for all child process to finish
     for(int i = 0; i < count; i++) 
         waitpid(-1, NULL, 0);
 }
 
+/*
+ * Change the working directory within the process. The funciton acounts for
+ * realtive paths and absolute path. If NULL is given as the argument
+ * changeDir change the working directory to the home of the user
+ */
 void changeDir(char* path) {
     const int max_path_buff = 4096;
     bool relative = false;
@@ -219,7 +252,7 @@ void changeDir(char* path) {
         char substr[max_path_buff];
         strncpy(substr, &path[1], max_path_buff);
 
-        // Concate the string
+        // Concatenate the string
         strcat(homepathCopy, substr);
         strcpy(path, homepathCopy); // Insert into path
 
@@ -256,6 +289,9 @@ void changeDir(char* path) {
     }
 }
 
+/*
+ * Print a welcome message
+ */
 void welcomeMsg() { 
     puts("                    _"); 
     puts("                   | |");
