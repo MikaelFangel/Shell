@@ -43,7 +43,11 @@ int main(void) {
             if(strcmp(args[0], "exit") == 0) break; 
 
             // Read the tokens into args and keep track of number of arguments
-            while((args[argc++] = strtok_advanced(NULL, delim, openBlock, closeBlock)) != NULL);
+            while((args[argc++] = strtok_advanced(NULL, delim, openBlock, closeBlock)) != NULL) {
+                if(*args[argc - 1] == '"') {
+                    args[argc - 1]++;
+                }
+            }
             args[argc] = NULL;
 
             // Pass the parser the arguments
@@ -85,7 +89,12 @@ char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlo
     while(*token != '\0') {
         // If already in block, don't tokenize on delimiter
         if(iBlock) {
-            if(closeBlock[iBlockIndex] == *token) iBlock = 0;
+            if(closeBlock[iBlockIndex] == *token) {
+                iBlock = 0;
+                *token = '\0';
+                token += 2;
+                break;
+            }
             token++;
             continue;
         }
