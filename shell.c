@@ -32,7 +32,8 @@ int main(void) {
         else if(nread > 1) {
             char *args[nread];
             char delim[] = " \n";
-            char openBlock[] = {"\""}, closeBlock[] = {"\""};
+            char openBlock[] = {"\""};
+            char closeBlock[] = {"\""};
             int argc = 1;
 
             // Tokenize string
@@ -63,7 +64,8 @@ char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlo
     static char *token = NULL;
     char *lead = NULL;
     char *block = NULL;
-    int iBlock = 0, iBlockIndex = 0;
+    int iBlock = 0;
+    int iBlockIndex = 0;
 
     // when calling the function on input the first time
     if(input != NULL) {
@@ -74,16 +76,16 @@ char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlo
         // when function is called with "NULL" as input, it continues from prev state
         // this works like strtok()
         lead = token;
-        // if token from prev call was EOF
+        // if token from prev call was null byte
         if(*token == '\0') {
-            return NULL;
+            lead = NULL;
         }
     }
 
     while(*token != '\0') {
         // If already in block, don't tokenize on delimiter
         if(iBlock) {
-            if(closeBlock[iBlockIndex]) iBlock = 0;
+            if(closeBlock[iBlockIndex] == *token) iBlock = 0;
             token++;
             continue;
         }
