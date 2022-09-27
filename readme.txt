@@ -74,8 +74,6 @@ CONCEPTS
 
     Program Environment
         The Shell is to be executed from within a terminal (another shell). The shell has no window or UI, its purely text-based. This means that the shell has to be ran within another shell. The Shell will be running as a process within the hosted shell. Its a shell running a shell. This means, that whenever our shell exits, the hosting shell will still be running. This is because the hosting shell will be waiting for our shell's process to finish before moving on. 
-
-    Background Program Execution
         
 BIBLIOGRAPHY
     [1]     IEEE/The Open Group (2017, bash dup2 manual page)

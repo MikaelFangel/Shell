@@ -40,7 +40,10 @@ int main(void) {
             args[0] = strtok_advanced(line, delim, openBlock, closeBlock); 
 
             // if exit has been inputted, exit program
-            if(strcmp(args[0], "exit") == 0) break; 
+            if(strcmp(args[0], "exit") == 0) {
+                free(args);
+                break;
+            } 
 
             // Read the tokens into args and keep track of number of arguments
             while((args[argc++] = strtok_advanced(NULL, delim, openBlock, closeBlock)) != NULL) {
