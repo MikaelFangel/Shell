@@ -30,17 +30,19 @@ int main(void) {
             exit(EXIT_FAILURE);
         } 
         else if(nread > 1) {
-            char *args[nread], delim[] = " \n";
+            char *args[nread];
+            char delim[] = " \n";
+            char openBlock[] = {"\""}, closeBlock[] = {"\""};
             int argc = 1;
 
             // Tokenize string
-            args[0] = strtok(line, delim); 
+            args[0] = strtok_advanced(line, delim, openBlock, closeBlock); 
 
             // if exit has been inputted, exit program
             if(strcmp(args[0], "exit") == 0) break; 
 
             // Read the tokens into args and keep track of number of arguments
-            while((args[argc++] = strtok(NULL, delim)) != NULL);
+            while((args[argc++] = strtok_advanced(NULL, delim, openBlock, closeBlock)) != NULL);
             args[argc] = NULL;
 
             // Pass the parser the arguments
@@ -51,6 +53,62 @@ int main(void) {
     free(line);
     exit(EXIT_SUCCESS);
 }
+
+/*
+* Advanced strtok:
+* Tokenizes input on delim if not in a block surrounded by openBlock and closeBlock
+*/
+char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlock) {
+    // Static variables preserve their value out of their scope too
+    static char *token = NULL;
+    char *lead = NULL;
+    char *block = NULL;
+    int iBlock = 0, iBlockIndex = 0;
+
+    // when calling the function on input the first time
+    if(input != NULL) {
+        token = input;
+        lead = input;
+    }
+    else {
+        // when function is called with "NULL" as input, it continues from prev state
+        // this works like strtok()
+        lead = token;
+        // if token from prev call was EOF
+        if(*token == '\0') {
+            return NULL;
+        }
+    }
+
+    while(*token != '\0') {
+        // If already in block, don't tokenize on delimiter
+        if(iBlock) {
+            if(closeBlock[iBlockIndex]) iBlock = 0;
+            token++;
+            continue;
+        }
+
+        // If the token occurs in openBlock
+        if((block = strchr(openBlock, *token)) != NULL) {
+            iBlock = 1;
+            // subtract address of openBlock from address of block to find the index
+            // of the character that maches the token
+            iBlockIndex = block - openBlock;
+            token++;
+            continue;
+        }
+
+        // If token occurs in the delimiter
+        if(strchr(delim, *token) != NULL) {
+            *token = '\0';
+            token++;
+            break;
+        }
+        token++;
+    }
+    return lead;
+}
+
 
 /*
    Parses the argv array to determine if is should start

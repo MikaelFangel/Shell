@@ -13,3 +13,4 @@ void changeDir(char* path);
 void welcomeMsg();
 void addHistory(char *argv[]);
 void readHistory();
+char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlock);
