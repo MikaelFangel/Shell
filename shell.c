@@ -253,7 +253,7 @@ void changeDir(char* path) {
 
         // Remove tilde from path
         char substr[max_path_buff];
-        strncpy(substr, &path[1], max_path_buff);
+        strcpy(substr, &path[1]);
 
         // Concatenate the string
         strcat(homepathCopy, substr);
@@ -274,6 +274,7 @@ void changeDir(char* path) {
     else {  // else it's relative
         // Get current working directory to concat the new full path
         char *cwd = getcwd(NULL, 0); 
+        cwd = realloc(cwd, strlen(cwd) + strlen(path) + 2);
 
         // Add '\' between cwd and the relative path
         strcat(cwd, "/"); 
