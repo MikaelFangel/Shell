@@ -89,3 +89,4 @@ BIBLIOGRAPHY
     [9]     GNU (2021, bash strtok manual page)
     [10]    IEEE/The Open Group (2017, bash environ manual page)
     [11]    GNU (2021, bash getenv manual page)
+    [12]    https://stackoverflow.com/questions/26187037/in-c-split-char-on-spaces-with-strtok-function-except-if-between-quotes 

@@ -63,6 +63,7 @@ int main(void) {
 /*
 * Advanced strtok:
 * Tokenizes input on delim if not in a block surrounded by openBlock and closeBlock
+* ref: https://stackoverflow.com/questions/26187037/in-c-split-char-on-spaces-with-strtok-function-except-if-between-quotes
 */
 char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlock) {
     // Static variables preserve their value out of their scope too
