@@ -39,6 +39,7 @@ MANUAL for use
     Using commands
     - You can use all commands that are in your PATH.
     - This means that the shell supports: "wc", "pwd", "ls", "cat", "curl" and many more. All theses commands accept zero or more arguments.
+    - If you need to specify path or a sentence that includes spaces, you can enclose the token in quotes like so "Hello World" to let the parser interpret it as a single token.
 
     Process Piping
     - You can pipe an output from a process as an input for another. You can do this using the pipe operator '|' between commands.
