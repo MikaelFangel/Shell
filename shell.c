@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "shell.h" // ""'s to makes the compiler look for the header file in the same directory <>'s would not.
 
 int main(void) {
@@ -214,7 +212,7 @@ void readHistory(char* buf) {
 }
 
 /*
- * Start a new process using the execvpe function and return 1 if not found
+ * Start a new process using the execvp function and return 1 if not found
  * the functions takes a array of the command and all its flags and then
  * creates a new child process.
  */
@@ -226,13 +224,8 @@ void newProcess(char* argv[]){
             exit(EXIT_FAILURE);
 
         case 0:             // Child
-            // Get the PATH environment variable and null terminate it
-            char *env[2];
-            env[0] = getenv("PATH");
-            env[1] = NULL;
-
             // Overwrite program image
-            execvpe(argv[0], argv, env);
+            execvp(argv[0], argv);
 
             // Print if execvp fails because then command is not found
             puts("Command not found...");
@@ -281,10 +274,7 @@ void pipeLine(char **args[], int count) {
                 }
                 
                 // Execute the chosen process as child
-                char *env[2];
-                env[0] = getenv("PATH");
-                env[1] = NULL;
-                execvpe(*args[i], args[i], env);
+                execvp(*args[i], args[i]);
 
                 // If reached error in exec has occurred
                 exit(EXIT_FAILURE);
