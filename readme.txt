@@ -7,7 +7,9 @@ DESCRIPTION
 
     - The shell support the 'cd' command (Change Diretory). 'cd' supports absolute and relative pathing. Absolute paths have to start with '/', whereas relative does not.
       The 'cd' command also supports using '~' (HOME path) to refere to the homepath enviroment variable. Using 'cd' with no arguments, changes by default the users working directory to HOME.
+
     - The shell support the 'history' command. All commands are logged to a .shell_history file in the home directory. The history command prints the contents of the .shell_history file. 
+    
     - The shell supports piping between proceses, using the pipe operator '|'. The shell supports pipe-chaining, meaning you can create pipes between multiple processes in a single command to the shell. 
 
 
