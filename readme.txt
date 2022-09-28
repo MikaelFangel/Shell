@@ -1,17 +1,19 @@
 DESCRIPTION
-    We have created a shell program, writing in C, that runs a interactive prompt taking commands.
+    We have created a shell program, written in C, that runs an interactive prompt taking commands.
 
     - The shell shows the users current working directory at all times.
 
     - The shell has the ability to execute any program placed in the /bin/ folder on Linux systems, such as ls, wc, pwd with zero or more arguments.
 
-    - The shell support the cd command (Change Diretory). cd supports absolute and relative pathing. Absolute paths have to start with '/', whereas relative does not.
-      The cd command also supports using '~' (HOME path) to refere to the homepath enviroment variable. Using cd with no arguments, changes by default the users working directory to HOME.
+    - The shell support the 'cd' command (Change Diretory). 'cd' supports absolute and relative pathing. Absolute paths have to start with '/', whereas relative does not.
+      The 'cd' command also supports using '~' (HOME path) to refere to the homepath enviroment variable. Using 'cd' with no arguments, changes by default the users working directory to HOME.
 
     - The shell supports piping between proceses, using the pipe operator '|'. The shell supports pipe-chaining, meaning you can create pipes between multiple processes in a single command to the shell. 
 
 
 MANUAL for setup
+    - The setup can only be compiled if GCC is supported.
+
     1. Extract the zip file.
     2. Navigate to the extracted directory with a terminal.
     3. Type 'make'.
@@ -39,6 +41,7 @@ MANUAL for use
     Using commands
     - You can use all commands that are in your PATH.
     - This means that the shell supports: "wc", "pwd", "ls", "cat", "curl" and many more. All theses commands accept zero or more arguments.
+    - If you need to specify path or a sentence that includes spaces, you can enclose the token in quotes like so "Hello World" to let the parser interpret it as a single token.
 
     Process Piping
     - You can pipe an output from a process as an input for another. You can do this using the pipe operator '|' between commands.
