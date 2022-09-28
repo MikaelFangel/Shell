@@ -211,12 +211,17 @@ void readHistory() {
     strcat(file, fileName);
 
     fptr = fopen(file, "r");
-    char* line;
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t nreads;
     int i = 1;
-    while((fgets(line, sizeof(line), fptr)) != NULL) {
+    while((nreads = getline(&line, &len, fptr)) < 1) {
+        fseek(fptr, strlen(line) + 1, SEEK_CUR);
         printf("%i\t%s", i, line);
         i++;
     }
+
+    free(line);
     fclose(fptr);
     free(file);
 }
