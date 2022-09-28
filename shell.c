@@ -141,8 +141,6 @@ void parser(int argc, char *argv[]) {
     nextargv[0] = &argv[0];
     char his[100];
 
-    //addHistory(argv);
-    
     /* Looks if any tokens contains the pipe operator
     and populate the nextargv array with locations of commands i */
     for(int i = 0; argv[i] != NULL; i++) {
@@ -184,14 +182,17 @@ void parser(int argc, char *argv[]) {
  * Add string to a .shell_history file to enable Shell Command history
  */
 void addHistory(char *argv) {
-    // Open file or create if it does not excists
+    // Open file or create if it does not exist
     FILE *fptr;
     char *file;
     char *fileName = "/.shell_history";
     file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+
+    // Construct full path for file
     strcpy(file, getenv("HOME"));
     strcat(file, fileName);
 
+    // Append command to end of file
     fptr = fopen(file, "a");
     fputs(argv, fptr); 
     fclose(fptr);
@@ -207,6 +208,8 @@ void readHistory() {
     char* file;
     char* fileName = "/.shell_history";
     file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+
+    // Constructing full path for history file
     strcpy(file, getenv("HOME"));
     strcat(file, fileName);
 
@@ -217,12 +220,16 @@ void readHistory() {
     ssize_t fpos = 0;
 
     int i = 1;
+
+    // Read until EOF (1)
     while((nreads = getline(&line, &len, fptr)) > 1) {
+        // Move file pointer forward while calculating offset from beginning of file
         fseek(fptr, (fpos += nreads), SEEK_SET);
         printf("%i\t%s", i, line);
         i++;
     }
 
+    // Clean up memory and close file stream
     free(line);
     fclose(fptr);
     free(file);
