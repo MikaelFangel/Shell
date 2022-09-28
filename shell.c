@@ -214,9 +214,11 @@ void readHistory() {
     char* line = NULL;
     size_t len = 0;
     ssize_t nreads;
+    ssize_t fpos = 0;
+
     int i = 1;
-    while((nreads = getline(&line, &len, fptr)) < 1) {
-        fseek(fptr, strlen(line) + 1, SEEK_CUR);
+    while((nreads = getline(&line, &len, fptr)) > 1) {
+        fseek(fptr, (fpos += nreads), SEEK_SET);
         printf("%i\t%s", i, line);
         i++;
     }
