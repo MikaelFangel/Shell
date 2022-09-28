@@ -12,6 +12,8 @@ DESCRIPTION
 
 
 MANUAL for setup
+    - The setup can only be compiled if GCC is supported.
+
     1. Extract the zip file.
     2. Navigate to the extracted directory with a terminal.
     3. Type 'make'.
