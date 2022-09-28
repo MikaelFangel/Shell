@@ -34,6 +34,8 @@ int main(void) {
             char closeBlock[] = {"\""};
             int argc = 1;
 
+            addHistory(line);
+
             // Tokenize string
             args[0] = strtok_advanced(line, delim, openBlock, closeBlock); 
 
@@ -166,6 +168,9 @@ void parser(int argc, char *argv[]) {
             else 
                 changeDir(NULL);
 
+        else if (strcmp(argv[0], "history") == 0)
+                readHistory();
+
         else // Start new process
             newProcess(argv);  
 
@@ -178,37 +183,42 @@ void parser(int argc, char *argv[]) {
 /*
  * Add string to a .shell_history file to enable Shell Command history
  */
-void addHistory(char *argv[]) {
+void addHistory(char *argv) {
     // Open file or create if it does not excists
     FILE *fptr;
-    fptr = fopen(".shell_history", "a");
+    char *file;
+    char *fileName = "/.shell_history";
+    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+    strcpy(file, getenv("HOME"));
+    strcat(file, fileName);
 
-    // For each argument write it to the file and add space.
-    for (int i = 0; argv[i] != NULL; i++) {
-       fputs(argv[i], fptr);
-       fputs(" ", fptr);
-    }
-    // Add newline to the end of the command
-    fputs("\n", fptr);
+    fptr = fopen(file, "a");
+    fputs(argv, fptr); 
     fclose(fptr);
+    free(file);
 }
 
 /*
  * Read last line from .shell_history file and add it to a character array
  */
-void readHistory(char* buf) {
-    // Open file
+void readHistory() {
+    // Open and read file line-by-line and print content
     FILE *fptr;
-    fptr = fopen(".shell_history", "r");
+    char* file;
+    char* fileName = "/.shell_history";
+    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+    strcpy(file, getenv("HOME"));
+    strcat(file, fileName);
 
-    while(1) {
-        // Continue reading file line-by-line until EOF, and save each line to the array. 
-        // When the file ends the last line is saved in the array
-        if (fgets(buf, sizeof(buf), fptr) == NULL) {
-            break;
-        }
+    fptr = fopen(file, "r");
+    char* line;
+    int i = 1;
+    while((fgets(line, sizeof(line), fptr)) != NULL) {
+        printf("%i\t%s", i, line);
+        i++;
     }
     fclose(fptr);
+    free(file);
 }
 
 /*
