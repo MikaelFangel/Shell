@@ -63,68 +63,6 @@ int main(void) {
     exit(EXIT_SUCCESS);
 }
 
-/*
-* Advanced strtok:
-* Tokenizes input on delim if not in a block surrounded by openBlock and closeBlock
-* ref: https://stackoverflow.com/questions/26187037/in-c-split-char-on-spaces-with-strtok-function-except-if-between-quotes
-*/
-char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlock) {
-    // Static variables preserve their value out of their scope too
-    static char *token = NULL;
-    char *lead = NULL;
-    char *block = NULL;
-    int iBlock = 0;
-    int iBlockIndex = 0;
-
-    // when calling the function on input the first time
-    if(input != NULL) {
-        token = input;
-        lead = input;
-    }
-    else {
-        // when function is called with "NULL" as input, it continues from prev state
-        // this works like strtok()
-        lead = token;
-        // if token from prev call was null byte
-        if(*token == '\0') {
-            lead = NULL;
-        }
-    }
-
-    while(*token != '\0') {
-        // If already in block, don't tokenize on delimiter
-        if(iBlock) {
-            if(closeBlock[iBlockIndex] == *token) {
-                iBlock = 0;
-                *token = '\0';
-                token += 2;
-                break;
-            }
-            token++;
-            continue;
-        }
-
-        // If the token occurs in openBlock
-        if((block = strchr(openBlock, *token)) != NULL) {
-            iBlock = 1;
-            // subtract address of openBlock from address of block to find the index
-            // of the character that maches the token
-            iBlockIndex = block - openBlock;
-            token++;
-            continue;
-        }
-
-        // If token occurs in the delimiter
-        if(strchr(delim, *token) != NULL) {
-            *token = '\0';
-            token++;
-            break;
-        }
-        token++;
-    }
-    return lead;
-}
-
 
 /*
  * Parses the argv array to determine if is should start
@@ -176,63 +114,6 @@ void parser(int argc, char *argv[]) {
         pipeLine(nextargv, containsPipe + 1);
 
     free(nextargv);
-}
-
-/*
- * Add string to a .shell_history file to enable Shell Command history
- */
-void addHistory(char *argv) {
-    // Open file or create if it does not exist
-    FILE *fptr;
-    char *file;
-    char *fileName = "/.shell_history";
-    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
-
-    // Construct full path for file
-    strcpy(file, getenv("HOME"));
-    strcat(file, fileName);
-
-    // Append command to end of file
-    fptr = fopen(file, "a");
-    fputs(argv, fptr); 
-    fclose(fptr);
-    free(file);
-}
-
-/*
- * Read last line from .shell_history file and add it to a character array
- */
-void readHistory() {
-    // Open and read file line-by-line and print content
-    FILE *fptr;
-    char* file;
-    char* fileName = "/.shell_history";
-    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
-
-    // Constructing full path for history file
-    strcpy(file, getenv("HOME"));
-    strcat(file, fileName);
-
-    fptr = fopen(file, "r");
-    char* line = NULL;
-    size_t len = 0;
-    ssize_t nreads;
-    ssize_t fpos = 0;
-
-    int i = 1;
-
-    // Read until EOF (1)
-    while((nreads = getline(&line, &len, fptr)) > 1) {
-        // Move file pointer forward while calculating offset from beginning of file
-        fseek(fptr, (fpos += nreads), SEEK_SET);
-        printf("%i\t%s", i, line);
-        i++;
-    }
-
-    // Clean up memory and close file stream
-    free(line);
-    fclose(fptr);
-    free(file);
 }
 
 /*
@@ -376,6 +257,125 @@ void changeDir(char* path) {
     if (returnCode == -1){ // Error
         printf("Unknown path!\n");
     }
+}
+
+/*
+ * Add string to a .shell_history file to enable Shell Command history
+ */
+void addHistory(char *argv) {
+    // Open file or create if it does not exist
+    FILE *fptr;
+    char *file;
+    char *fileName = "/.shell_history";
+    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+
+    // Construct full path for file
+    strcpy(file, getenv("HOME"));
+    strcat(file, fileName);
+
+    // Append command to end of file
+    fptr = fopen(file, "a");
+    fputs(argv, fptr); 
+    fclose(fptr);
+    free(file);
+}
+
+/*
+ * Read last line from .shell_history file and add it to a character array
+ */
+void readHistory() {
+    // Open and read file line-by-line and print content
+    FILE *fptr;
+    char* file;
+    char* fileName = "/.shell_history";
+    file = malloc(strlen(getenv("HOME")) + strlen(fileName) + 1); // IMPORTANT TO NOT MODIFY WHAT IS ON THE ENV VARIABLE POINTER
+
+    // Constructing full path for history file
+    strcpy(file, getenv("HOME"));
+    strcat(file, fileName);
+
+    fptr = fopen(file, "r");
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t nreads;
+    ssize_t fpos = 0;
+
+    int i = 1;
+
+    // Read until EOF (1)
+    while((nreads = getline(&line, &len, fptr)) > 1) {
+        // Move file pointer forward while calculating offset from beginning of file
+        fseek(fptr, (fpos += nreads), SEEK_SET);
+        printf("%i\t%s", i, line);
+        i++;
+    }
+
+    // Clean up memory and close file stream
+    free(line);
+    fclose(fptr);
+    free(file);
+}
+
+/*
+* Advanced strtok:
+* Tokenizes input on delim if not in a block surrounded by openBlock and closeBlock
+* ref: https://stackoverflow.com/questions/26187037/in-c-split-char-on-spaces-with-strtok-function-except-if-between-quotes
+*/
+char *strtok_advanced (char *input, char *delim, char *openBlock, char *closeBlock) {
+    // Static variables preserve their value out of their scope too
+    static char *token = NULL;
+    char *lead = NULL;
+    char *block = NULL;
+    int iBlock = 0;
+    int iBlockIndex = 0;
+
+    // when calling the function on input the first time
+    if(input != NULL) {
+        token = input;
+        lead = input;
+    }
+    else {
+        // when function is called with "NULL" as input, it continues from prev state
+        // this works like strtok()
+        lead = token;
+        // if token from prev call was null byte
+        if(*token == '\0') {
+            lead = NULL;
+        }
+    }
+
+    while(*token != '\0') {
+        // If already in block, don't tokenize on delimiter
+        if(iBlock) {
+            if(closeBlock[iBlockIndex] == *token) {
+                iBlock = 0;
+                *token = '\0';
+                token += 2;
+                break;
+            }
+            token++;
+            continue;
+        }
+
+        // If the token occurs in openBlock
+        if((block = strchr(openBlock, *token)) != NULL) {
+            iBlock = 1;
+            // subtract address of openBlock from address of block to find the index
+            // of the character that maches the token
+            iBlockIndex = block - openBlock;
+            token++;
+            continue;
+        }
+
+        // If token occurs in the delimiter
+        if(strchr(delim, *token) != NULL) {
+            *token = '\0';
+            token++;
+            break;
+        }
+        token++;
+    }
+    return lead;
 }
 
 /*
