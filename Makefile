@@ -1,2 +1,5 @@
-all:
-	gcc shell.c shell.h -o shell
+all: shell.c shell.h
+	gcc $< -o shell
+
+clean:
+	rm -rf shell *.o
